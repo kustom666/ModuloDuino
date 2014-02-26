@@ -2,16 +2,27 @@
 #define DEF_PAN_BUS
 
 #include "Arduino.h"
+#include "PanMessage.h"
 
-/*
+/**
 *	Gère la communication sur bus PAN (Paul Area Network)
 *	@author Paul Forti
 */
 class PanBus
 {
 public:
-	PanBus();
+	PanBus(int pinHigh = 8, int pinLow = 7, int pinLock = 4);
 	~PanBus();
+
+	// Getters et setters
+	int getPinHigh();
+	int getPinLow();
+	int getPinLock();
+
+	void setPinHigh(int pinHigh);
+	void setPinLow(int pinLow);
+	void setPinLock(int pinLock);
+
 private:
 	int pinHigh; 	//!< numéro du pin high
 	int pinLow;		//!< numéro du pin low
