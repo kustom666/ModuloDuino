@@ -12,6 +12,8 @@ public:
 	PanMessage();
 	PanMessage(const char* data);
 	~PanMessage();
+private:
+	intg 
 	
 };
 #endif // DEF_PAN_MESSAGE

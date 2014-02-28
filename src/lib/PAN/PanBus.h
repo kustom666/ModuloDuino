@@ -22,6 +22,8 @@ public:
 	void setPinHigh(int pinHigh);
 	void setPinLow(int pinLow);
 	void setPinLock(int pinLock);
+	QAction *actionOpen;
+	
 
 private:
 	int pinHigh; 	//!< numéro du pin high
