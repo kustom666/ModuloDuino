@@ -1,41 +1,76 @@
 #include <Servo.h>
 
-Servo roueGauche;
-Servo roueDroite;
-int zeroDroite;
-int zeroGauche;
+Servo bras;
+int zeroBras;
+char recv[10];
+int noRecv;
+int nbModules;
+int posX;
+double angle;
+unsigned long backTime;
+extern volatile unsigned long timer0_overflow_count;
+
 void setup() {
   // put your setup code here, to run once:
-  roueGauche.attach(5);
-  roueDroite.attach(3);
-  zeroDroite = roueDroite.read();
-  zeroGauche = roueGauche.read();
-  roueDroite.write(zeroDroite);
-  roueGauche.write(zeroGauche);
-  Serial.begin(9600);
+  backTime = 0;
+  bras.attach(3);
+  bras.write(90);
+  Serial1.begin(9600);
+  Serial1.write("NEW");
+  reset();
+  noRecv = 0;
+  nbModules = 1;
+  posX = 3;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  if(Serial1.available() > 0)
+  {
+    handleSerial();
+  }
+  unsigned long time = timer0_overflow_count;  
+  if((time-backTime) >= 200)
+  {
+    backTime = time;
+    double angle = sin(time + posX);
+    int angleDeg = (angle * 4068) / 71;
+    bras.write(90+angleDeg);
+  }
 }
 
-void serialEvent()
+void handleSerial()
 {
-  Serial.println("Event serie");
-  int lu = Serial.read();
-  if(lu == 71) // Roue gauche
+  char lu = Serial1.read();
+  if(noRecv < 2)
   {
-    roueDroite.write(0);
-    roueGauche.write(180);
+    recv[noRecv] = lu;
+    noRecv++;
   }
-  else if(lu == 68) // Roue droite
+  else
   {
-    roueGauche.write(0);
-    roueDroite.write(180);
+    recv[noRecv] = lu;    
+    if(recv[0] == 'R' && recv[1] == 'E' && recv[2] == 'S')
+    {
+        reset();
+    }
+    else if(recv[0] == 'N' && recv[1] == 'E' && recv[2] == 'W')
+    {
+        reset();
+        nbModules++;
+    }
+    else if(recv[0] == 'M' && recv[1] == 'A' && recv[2] == 'J')
+    {
+       char nbModulesRecv = Serial1.read();
+       nbModules = nbModulesRecv;
+    }
+    noRecv = 0;
   }
-  else if(lu == 83)
-  {
-    roueGauche.write(90);
-    roueDroite.write(90);
-  }
+
+}
+
+void reset()
+{
+  bras.write(90);
+  timer0_overflow_count = 0;
 }
