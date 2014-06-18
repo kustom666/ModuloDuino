@@ -15,12 +15,12 @@ void setup() {
   backTime = 0;
   bras.attach(3);
   bras.write(90);
+  nbModules = 0;
+  posX = 1;
   Serial1.begin(9600);
   Serial1.write("NEW");
   reset();
   noRecv = 0;
-  nbModules = 1;
-  posX = 3;
 }
 
 void loop() {
@@ -58,11 +58,15 @@ void handleSerial()
     {
         reset();
         nbModules++;
+        Serial1.write("MAJ"); 
+        Serial1.write(nbModules);
+        
     }
     else if(recv[0] == 'M' && recv[1] == 'A' && recv[2] == 'J')
     {
        char nbModulesRecv = Serial1.read();
        nbModules = nbModulesRecv;
+       posX = nbModules;
     }
     noRecv = 0;
   }
