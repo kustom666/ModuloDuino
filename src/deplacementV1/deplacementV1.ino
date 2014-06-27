@@ -19,15 +19,16 @@ void setup() {
   bras.write(90);
   nbModules = 0;
   posX = 1;
-  Serial1.begin(9600);
-  Serial1.write("NEW");
+  Serial.begin(9600);
+  Serial.write("NEW");
   reset();
   noRecv = 0;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(Serial1.available() > 0)
+  timea = micros();
+  if(Serial.available() > 0)
   {
     handleSerial();
   }
@@ -43,7 +44,7 @@ void loop() {
 
 void handleSerial()
 {
-  char lu = Serial1.read();
+  char lu = Serial.read();
   if(noRecv < 2)
   {
     recv[noRecv] = lu;
@@ -60,13 +61,13 @@ void handleSerial()
     {
         reset();
         nbModules++;
-        Serial1.write("MAJ"); 
-        Serial1.write(nbModules);
+        Serial.write("MAJ"); 
+        Serial.write(nbModules);
         
     }
     else if(recv[0] == 'M' && recv[1] == 'A' && recv[2] == 'J')
     {
-       char nbModulesRecv = Serial1.read();
+       char nbModulesRecv = Serial.read();
        nbModules = nbModulesRecv;
        posX = nbModules;
     }
